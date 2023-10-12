@@ -1,0 +1,11 @@
+.drop__zone {
+    width: 150px;
+    height: 150px;
+    border: dotted 2px purple;
+}
+.drop__zone_comment{
+
+}
+#file-upload{
+    /* display: none; */
+}
