@@ -4,7 +4,7 @@ function folder_view($target)
 {
     // $loop = 0;
 
-//page header is not a function called tite_view.php
+    //page header is not a function called tite_view.php
     //end of page header
 
     $item = scandir($target);
@@ -19,7 +19,7 @@ function folder_view($target)
                 echo '</a></div><div>';
                 echo '<a href="index.php?target=' . $target . '/' . $i . '&view=folder">';
                 echo $i . '</a>' . '</div></div></td></tr>' . "\n\n";
-                folder_view($target . '/' . $i);
+                // folder_view($target . '/' . $i);
             }
             //check for pdf
             elseif (stripos($i, '.pdf') == true) {
