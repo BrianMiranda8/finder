@@ -29,13 +29,13 @@
 
     //error_reporting(-1);
     //ini_set('display_errors', 'On');
-
+    
     //View and search functions 
     include($_SERVER['DOCUMENT_ROOT'] . '/policy-code/functions/folder_view.php');
     include($_SERVER['DOCUMENT_ROOT'] . '/policy-code/functions/file_view.php');
     include($_SERVER['DOCUMENT_ROOT'] . '/policy-code/functions/search_view.php');
     include($_SERVER['DOCUMENT_ROOT'] . '/policy-code/functions/title_view.php');
-
+    include($_SERVER['DOCUMENT_ROOT'] . '/policy-code/FileHandler.php');
     //executable path
     $view_type = $_GET['view'];
     //echo $view_type;
@@ -51,7 +51,9 @@
     } else {
         title_view('/stuff');
         echo "<table id='main-table'>";
-        folder_view('/stuff');
+        // folder_view('/stuff');
+        $fileHandler = new FileHandler('/stuff');
+        $fileHandler->buildRows();
         echo "</table>";
     }
 

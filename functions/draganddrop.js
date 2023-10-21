@@ -13,21 +13,25 @@ const table = document.querySelector('#main-table');
 table.addEventListener('dragstart', (event) => {
     // getting info about the current file/folder we want to move
     let tr = event.target.closest('tr');
-    let path = tr.querySelector('div div:nth-child(3) a').href;
+    let parent = tr.getAttribute('data-parent');
+    let location = tr.getAttribute('data-src');
+    let name = location.split('/')[location.split('/').length - 1];
+    let type = tr.getAttribute('data-type');
     tr.id = 'selected-row';
 
-    const fileUrl = new URL(path);
+    // const fileUrl = new URL(path);
 
-    let fileName = tr.querySelector('div div:nth-child(3) a').innerText;
-    let currentDirectory = fileUrl.searchParams.get('target');
-    let type = fileUrl.searchParams.get('view');
+    // let fileName = tr.querySelector('div div:nth-child(3) a').innerText;
+    // let currentDirectory = fileUrl.searchParams.get('target');
+    // let type = fileUrl.searchParams.get('view');
 
     // /stuff/dogman
-    event.dataTransfer.setData('parent', currentDirectory);
+    event.dataTransfer.setData('parent', parent);
     // black-block.png
-    event.dataTransfer.setData('fileName', fileName);
+    event.dataTransfer.setData('fileName', name);
     // file
-    event.dataTransfer.setData('type', type);
+    event.dataTransfer.setData('location', location);
+    event.dataTransfer.setData('type', type)
 
 
 
@@ -47,22 +51,25 @@ table.addEventListener('dragleave', event => {
 table.addEventListener('drop', async (event) => {
     event.target.style.backgroundColor = "";
     let tr = event.target.closest('tr');
-    const oldLocation = event.dataTransfer.getData('parent');
+    // data about file that is being moved
+    const currentLocation = event.dataTransfer.getData('location');
     const fileName = event.dataTransfer.getData('fileName');
-    const encodedUrl = encodeURIComponent(tr.querySelector('a').href)
-    const toURL = new URL(encodedUrl);
-
-    const newDirectory = toURL.searchParams.get('target');
-
-    const targetType = toURL.searchParams.get('view')
+    const parentDir = event.dataTransfer.getData('parent')
+    const type = event.dataTransfer.getData('type')
+    // info about target area
+    const targetType = tr.getAttribute('data-type');
+    const targetLocation = tr.getAttribute('data-src');
 
     let postObj = {
-        parent: oldLocation,
-        fileName: fileName,
-        newDir: newDirectory
+        targetType,
+        targetLocation,
+        currentLocation,
+        fileName,
+        parentDir,
+        type
     }
-    switch (targetType) {
-        case "folder":
+    
+      
 
             let request = await fetch(`../process-movement.php`, {
                 method: 'POST',
@@ -94,13 +101,7 @@ table.addEventListener('drop', async (event) => {
                     console.log(response);
                 }
             }
-            break;
-
-        default:
-            // alert(`You are trying to move a ${fromFolder} into a ${dropFileFolderType}`)
-            break;
-    }
-
+   
 
 
 })
