@@ -8,87 +8,73 @@ if (currentTarget == null) {
     currentTarget = "."
 }
 
-allNodes.forEach(node => {
-    let target = node.getAttribute('data-src');
 
-    if (currentTarget != target) {
-        node.classList.add('close-row')
 
+
+mainTable.addEventListener('click', async (event) => {
+
+
+    if (!event.target.classList.contains('arrow')) return;
+
+    tip();
+
+    let tr = event.target.closest('tr');
+    let directoryPath = tr.getAttribute('data-location');
+    if (!tr.getAttribute('data-set')) {
+        await initOpening(tr, directoryPath);
+        return;
     }
+    displayContent(directoryPath, tr);
 })
 
-//loop through all directories and indent content
+
+async function initOpening(tr, directoryPath) {
+
+    await insertDirContent(directoryPath, tr);
+
+    indentChildren(tr.querySelector('div'), directoryPath);
+    tr.setAttribute('data-set', true);
+}
+
+async function insertDirContent(directoryPath, row) {
+
+    let dirContent = await getContents(directoryPath.replace('.', ''));
+
+    row.insertAdjacentHTML('afterend', dirContent);
+
+}
 
 
-// tipDownArrow.forEach(arrow => {
-mainTable.addEventListener('click', async (e) => {
-    if (!e.target.classList.contains('arrow')) return;
-    e.preventDefault();
-    let tr = e.target.closest('tr');
-    tip(); //just changes the arrow
-    const imgUrl = new URL(e.target.parentElement.children[1].children[0].href);
-    let imgTarget = imgUrl.searchParams.get('target');
-    let row = await getContents(imgTarget.replace('.', '').replace('/', ''));
-    tr.insertAdjacentHTML('afterend', row)
-    let allDirs = Array.from(document.querySelectorAll('[data-type = "dir"]'));
+function displayContent(path, parent) {
 
-    allDirs.forEach(dir => {
-        let dirMargin = 0;
-        let dirName = dir.parentElement.parentElement.getAttribute('data-location');
-        if (dir.style.marginLeft != "") {
-            dirMargin = parseInt(dir.style.marginLeft.replace("px", ""));
+    let content = Array.from(document.querySelectorAll('#main-table tr[data-parent]'));
+
+    let img = parent.querySelector('div.arrow')
+
+    content.forEach((tr) => {
+
+        let parent = tr.getAttribute('data-parent');
+        if (!parent.includes(path)) return;
+
+
+
+        if (img.classList.contains('closed-folder')) {
+            let dir = tr.querySelector('div[data-type="dir"]');
+            // if (dir != null) {
+            //     dir.querySelector('div.arrow').classList.remove('open-folder')
+            //     dir.querySelector('div.arrow').classList.add('closed-folder')
+            // }
+            tr.classList.add('close-row')
+
         }
-        let dirContent = document.querySelectorAll(`[data-src = "${dirName}"] div.stuff-items`);
+        else {
 
-        dirContent.forEach(item => {
-            item.style.marginLeft = `${dirMargin + 30}px`;
-        })
+            tr.classList.remove('close-row')
+        }
     })
-    let targetFile = Array.from(document.querySelectorAll(`tr[data-src="${imgTarget}"]`));
-
-
-    // let openRows = Array.from(document.getElementsByClassName('open-row'))
-    //     .filter((row) => {
-    //         let rowSrc = row.getAttribute('data-src');
-    //         if (rowSrc.includes(`${imgTarget}`)) {
-
-    //             return row
-    //         }
-    //         return false
-    //     });
-
-    // targetFile.forEach(file => {
-
-    //     if (file.classList.contains('close-row')) {
-    //         file.classList.add('open-row')
-    //         file.classList.remove('close-row')
-
-    //     } else {
-    //         file.classList.add('close-row');
-    //         file.classList.remove('open-row');
-
-    //     }
-    // })
-
-    // openRows.forEach(row => {
-    //     let arrow;
-    //     if (row.querySelector('div.stuff-items[data-type="dir"] div.arrow')) {
-    //         arrow = row.querySelector('div.stuff-items[data-type="dir"] div.arrow');
-    //         let folder = row.querySelector('div>a.folder-icon')
-    //         folder.classList.remove('open')
-    //         arrow.classList.remove('open-folder');
-    //         arrow.classList.add('closed-folder');
-    //     }
-    //     row.classList.remove('open-row');
-    //     row.classList.add('close-row')
-
-
-    // })
-
-})
-// })
+}
 function tip() {
-    let folder = event.target.parentElement.querySelector('div>a.folder-icon')
+    let folder = event.target.parentElement.querySelector('a.folder-icon')
 
     if (event.target.classList.contains('closed-folder')) {
         event.target.classList.remove('closed-folder');
@@ -100,4 +86,25 @@ function tip() {
         event.target.classList.add('closed-folder');
         folder.classList.remove('open')
     }
+}
+
+
+function set(path) {
+    let isSet = localStorage.getItem(path);
+
+    if (isSet != null) {
+
+    }
+}
+
+function indentChildren(parent, directoryPath) {
+    let content = Array.from(document.querySelectorAll(`[data-parent="${directoryPath}"]`));
+
+    content.forEach(tr => {
+        let container = tr.querySelector('div.stuff-items');
+
+        let dirMargin = (parent.style.marginLeft == "") ? 0 : parseInt(parent.style.marginLeft.replace("px", ""));
+
+        container.style.marginLeft = `${dirMargin + 30}px`;
+    })
 }

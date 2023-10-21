@@ -7,31 +7,125 @@ const draggableRows = document.querySelectorAll('tr')
 const uploadButton = document.getElementById("upload-files-button");
 const itemForm = document.getElementById("newItemForm");
 const folderForm = document.getElementById("newFolderForm");
-console.log(itemForm);
+const table = document.querySelector('#main-table');
+
+
+table.addEventListener('dragstart', (event) => {
+    // getting info about the current file/folder we want to move
+    let tr = event.target.closest('tr');
+    let path = tr.querySelector('div div:nth-child(3) a').href;
+    tr.id = 'selected-row';
+
+    const fileUrl = new URL(path);
+
+    let fileName = tr.querySelector('div div:nth-child(3) a').innerText;
+    let currentDirectory = fileUrl.searchParams.get('target');
+    let type = fileUrl.searchParams.get('view');
+
+    // /stuff/dogman
+    event.dataTransfer.setData('parent', currentDirectory);
+    // black-block.png
+    event.dataTransfer.setData('fileName', fileName);
+    // file
+    event.dataTransfer.setData('type', type);
+
+
+
+})
+
+table.addEventListener('dragenter', event => {
+    event.preventDefault();
+})
+table.addEventListener('dragover', event => {
+    event.preventDefault();
+    event.target.style.backgroundColor = "lightgray";
+})
+table.addEventListener('dragleave', event => {
+    event.preventDefault();
+    event.target.style.backgroundColor = "";
+})
+table.addEventListener('drop', async (event) => {
+    event.target.style.backgroundColor = "";
+    let tr = event.target.closest('tr');
+    const oldLocation = event.dataTransfer.getData('parent');
+    const fileName = event.dataTransfer.getData('fileName');
+    const encodedUrl = encodeURIComponent(tr.querySelector('a').href)
+    const toURL = new URL(encodedUrl);
+
+    const newDirectory = toURL.searchParams.get('target');
+
+    const targetType = toURL.searchParams.get('view')
+
+    let postObj = {
+        parent: oldLocation,
+        fileName: fileName,
+        newDir: newDirectory
+    }
+    switch (targetType) {
+        case "folder":
+
+            let request = await fetch(`../process-movement.php`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": 'text/xml'
+                },
+                body: JSON.stringify(postObj)
+            })
+
+            let response = await request.json();
+
+            if (response) {
+                let { success, newLocation } = response
+                console.log(success, newLocation);
+                if (success) {
+
+                    let row = event.target.closest('tr');
+                    let margin = (row.style.marginLeft == '') ? 0 : parseInt(row.style.marginLeft.replace('px'));
+                    // let row = dir.parentElement.parentElement;
+                    let selectedRow = document.getElementById('selected-row')
+                    console.log(dir);
+                    let cloneSelectedRow = selectedRow.cloneNode(true);
+                    console.log(cloneSelectedRow);
+                    cloneSelectedRow.removeAttribute('id');
+                    cloneSelectedRow.querySelector('div.stuff-items').style.marginLeft = `${margin + 30}px`;
+                    row.insertBefore(cloneSelectedRow, row.nextSibling);
+                    selectedRow.remove();
+                } else {
+                    console.log(response);
+                }
+            }
+            break;
+
+        default:
+            // alert(`You are trying to move a ${fromFolder} into a ${dropFileFolderType}`)
+            break;
+    }
+
+
+
+})
+
 // Events 
 uploadButton.addEventListener('click', () => {
     let content = uploadModal.querySelector('div.file-modal');
 
-    //content.classList.add('open')
-    //uploadModal.classList.add('show');
+
     uploadModal.classList.remove('hidden');
 })
 
 fileButton.addEventListener('click', () => {
     let content = fileModal.querySelector('div.file-modal');
-    //fileModal.classList.add('show');
-   //content.classList.add('open');
-  fileModal.classList.remove('hidden');
-  itemForm['file-name'].focus();
+
+    fileModal.classList.remove('hidden');
+    itemForm['file-name'].focus();
 })
 
 folderButton.addEventListener('click', () => {
     let content = folderModal.querySelector('div.file-modal');
 
-    //content.classList.add('open')
-   // folderModal.classList.add('show');
-  folderModal.classList.remove('hidden');
-  folderForm['folder-name'].focus();
+
+    folderModal.classList.remove('hidden');
+    folderForm['folder-name'].focus();
 })
 
 function getElementTag(event) {
@@ -84,89 +178,7 @@ function getElementName(event) {
 
 Array.from(draggableRows).forEach(row => {
 
-    row.addEventListener('dragstart', (event) => {
-        // getting info about the current file/folder we want to move
 
-        const tagHref = getElementTag(event);
-        const fileUrl = new URL(tagHref);
-        let elementName = getElementName(event);
-        let currentDirectory = fileUrl.searchParams.get('target');
-        getRootTr(event).parentElement.parentElement.id = 'selected-row';
-        let elementType = fileUrl.searchParams.get('view');
-        event.dataTransfer.setData('currentDir', currentDirectory);
-        event.dataTransfer.setData('fileType', elementType);
-        event.dataTransfer.setData('fileName', elementName);
-        event.dataTransfer.setData('fromURl', tagHref)
-
-
-    })
-    row.addEventListener('dragenter', event => {
-        event.preventDefault();
-    })
-    row.addEventListener('dragover', event => {
-        event.preventDefault();
-        event.target.style.backgroundColor = "lightgray";
-    })
-    row.addEventListener('dragleave', event => {
-        event.preventDefault();
-        event.target.style.backgroundColor = "";
-    })
-    row.addEventListener('drop', (event) => {
-		        event.target.style.backgroundColor = "";
-
-        const directoryThatFromFilesLivesIn = event.dataTransfer.getData('currentDir');
-        const fromName = event.dataTransfer.getData('fileName');
-
-        const toURL = getElementTag(event);
-        const toDirectoryPath = new URL(toURL).searchParams.get('target');
-
-        const toType = new URL(getElementTag(event)).searchParams.get('view')
-
-        switch (toType) {
-            case "folder":
-                postObj = {
-                    currentDirectory: directoryThatFromFilesLivesIn,
-                    fromName: fromName,
-                    toDirectory: toDirectoryPath
-                }
-                fetch(`../process-movement.php`, {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": 'text/xml'
-                    },
-                    body: JSON.stringify(postObj)
-                }).then(data => {
-                    return data.json();
-                }).then(response => {
-                    let { success, newLocation } = response
-                    console.log(success, newLocation);
-                    if (success) {
-
-                        let dir = getRootTr(event);
-                        let margin = (dir.style.marginLeft == '') ? 0 : parseInt(dir.style.marginLeft.replace('px'));
-                        let row = dir.parentElement.parentElement;
-                        let selectedRow = document.getElementById('selected-row')
-                        console.log(dir);
-                        let cloneSelectedRow = selectedRow.cloneNode(true);
-                        console.log(cloneSelectedRow);
-                        cloneSelectedRow.removeAttribute('id');
-                        cloneSelectedRow.querySelector('div.stuff-items').style.marginLeft = `${margin + 30}px`;
-                        row.parentNode.insertBefore(cloneSelectedRow, row.nextSibling);
-                        selectedRow.remove();
-                    } else {
-                        console.log(response);
-                    }
-                })
-                break;
-
-            default:
-                // alert(`You are trying to move a ${fromFolder} into a ${dropFileFolderType}`)
-                break;
-        }
-
-
-
-    })
 })
 let cancelButtons = document.getElementsByName('cancel-button');
 cancelButtons.forEach(button => {

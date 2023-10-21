@@ -6,7 +6,7 @@ async function getContents(path, type = '') {
     let url = api();
     let pathName = url.pathname;
     url.pathname = '/policy-code/path-info.php'
-    url.searchParams.append('path', pathName + path);
+    url.searchParams.append('path', path);
 
     if (type != '')
         url.searchParams.append('type', type)
