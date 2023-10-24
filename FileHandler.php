@@ -6,6 +6,7 @@ class FileHandler
     public $rootPath;
     public $fullPath;
     public $ext;
+
     public $name;
 
     public function __construct(string $location, $rootPath = '/var/www/html')
@@ -19,11 +20,7 @@ class FileHandler
             $this->location = $location;
             $this->fullPath = $this->rootPath . $this->location;
             $this->name = basename($location);
-            if (is_dir($this->fullPath)) {
-                $this->ext = 'dir';
-            } else if (is_file($this->fullPath)) {
-                $this->ext = 'file';
-            }
+            $this->ext = pathinfo($this->location, PATHINFO_EXTENSION);
         } catch (Exception $e) {
 
             throw new Exception($e->getMessage());
@@ -103,9 +100,50 @@ class FileHandler
 
         return $htmlContent;
     }
+    public function display()
+    {
 
+        $this->fileTitle();
+        if ($this->ext == 'html') {
+            include($this->fullPath);
+        } else {
+            echo '<div class="article">';
+            include($this->fullPath);
+            echo '</div>';
+        }
+    }
+
+    public function fileTitle()
+    {
+        echo '<div class="title">
+		<div class="sixteen columns">
+	<img onclick="history.back()" src="/policy-code/images/back-icon-35.png" class="scale-with-grid" title="Go Back"><a href="index.php"><img src="/policy-code/images/home-icon-35.png" class="scale-with-grid" style="border: none;"></a>
+	<span class="titleText">Viewing</span></div></div>';
+
+    }
+
+    public function DirectoryTitle()
+    {
+        //build page header
+        echo '<div class="title">
+    <div class="two-thirds column" style="display:flex;align-items:center;justify-content: space-around;"><img onclick="history.back()" src="/policy-code/images/back-icon-35.png" class="scale-with-grid" title="Go Back"><a href="index.php"><img src="/policy-code/images/home-folder-icon-35.png" class="scale-with-grid" style="border: none;" title="Home"></a><span class="titleText">' . "R + E";
+        echo ' ' . $this->name . '</span> 
+        
+        <div class="adding-files">
+            <div class="file-button" id="file-button" title="New Text File inside"><img src="/policy-code/images/new-file-icon-white.png"></div>
+            <div class="file-button" id="folder-button" title="New Folder inside "><img src="/policy-code/images/new-folder-icon.png"></div>
+            <div class="file-button" id="upload-files-button" title="Upload Files into"><img src="/policy-code/images/upload-file-icon.png"></div>
+        </div>';
+
+        // if ($title !== 'Home Page') {
+        echo '</div><div class="one-third column">';
+        include($_SERVER['DOCUMENT_ROOT'] . '/policy-code/includes/search.html');
+        // }
+        echo '</div></div>';
+    }
     public function buildRows()
     {
+        $this->DirectoryTitle();
         foreach ($this->retrieveContent() as $i) {
             $target = $i['fullPath'];
             echo $this->htmlRow($i['type'], $target, $i['name'], $i['ext']);

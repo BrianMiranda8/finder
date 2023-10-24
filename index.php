@@ -37,25 +37,19 @@
     include($_SERVER['DOCUMENT_ROOT'] . '/policy-code/functions/title_view.php');
     include($_SERVER['DOCUMENT_ROOT'] . '/policy-code/FileHandler.php');
     //executable path
-    $view_type = $_GET['view'];
-    //echo $view_type;
-    if ($view_type == 'folder') {
-        title_view($_GET['target']);
-        echo "<table>";
-        folder_view($_GET['target']);
-        echo "</table>";
-    } else if ($view_type == 'file') {
-        file_view($_GET['target']);
-    } else if ($view_type == 'search') {
-        search_view($_GET['target']);
-    } else {
-        title_view('/stuff');
+    $target = (isset($_GET['target'])) ? $_GET['target'] : '/stuff';
+
+    // title_view($view_type);
+    $fileHandler = new FileHandler($target);
+    if ($fileHandler->ext == '') {
+
         echo "<table id='main-table'>";
-        // folder_view('/stuff');
-        $fileHandler = new FileHandler('/stuff');
         $fileHandler->buildRows();
         echo "</table>";
+    } else {
+        $fileHandler->display();
     }
+
 
     ?>
     <!-- <input type="file" name="" id=""> -->

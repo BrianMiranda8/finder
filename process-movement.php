@@ -9,11 +9,11 @@ $response = array('error' => '', 'newLocation' => '', 'ok' => false, 'row' => ''
 
 if ($targetType == 'file')
     $newLocation = $targetParent;
-
 else
     $newLocation = $targetLocation;
 
-$dest =  $newLocation . '/' . $fileName;
+$dest = $newLocation . '/' . $fileName;
+
 try {
 
 
@@ -22,10 +22,9 @@ try {
     }
 
     $fileHandler = new FileHandler($dest);
-
     $response['ok'] = true;
     $response['newLocation'] = $newLocation;
-    $response['row'] = $fileHandler->htmlRow($type, $newLocation, $fileName, $fileHandler->ext);
+    $response['row'] = $fileHandler->htmlRow($type, $dest, $fileName, $fileHandler->ext);
 } catch (Exception $e) {
     $response['error'] = $e->getMessage();
 } finally {

@@ -84,23 +84,17 @@ table.addEventListener('drop', async (event) => {
 
     if (response.ok) {
         let { success, newLocation } = response
-        console.log(success, newLocation);
-        if (success) {
-
-            let row = event.target.closest('tr');
-            let margin = (row.style.marginLeft == '') ? 0 : parseInt(row.style.marginLeft.replace('px'));
-            // let row = dir.parentElement.parentElement;
+            let insertRow = document.querySelector(`tr[data-location="${response.newLocation}"]`)
+            let margin = (insertRow.style.marginLeft == '') ? 0 : parseInt(insertRow.style.marginLeft.replace('px'));
+            insertRow.insertAdjacentHTML('afterend', response.row);
             let selectedRow = document.getElementById('selected-row')
-            console.log(dir);
-            let cloneSelectedRow = selectedRow.cloneNode(true);
-            console.log(cloneSelectedRow);
-            cloneSelectedRow.removeAttribute('id');
-            cloneSelectedRow.querySelector('div.stuff-items').style.marginLeft = `${margin + 30}px`;
-            row.insertBefore(cloneSelectedRow, row.nextSibling);
             selectedRow.remove();
-        } else {
-            console.log(response);
-        }
+            // let cloneSelectedRow = selectedRow.cloneNode(true);
+            // console.log(cloneSelectedRow);
+            // sele.removeAttribute('id');
+            // cloneSelectedRow.querySelector('div.stuff-items').style.marginLeft = `${margin + 30}px`;
+            // row.insertBefore(cloneSelectedRow, row.nextSibling);
+            // selectedRow.remove();
     }
 
 
