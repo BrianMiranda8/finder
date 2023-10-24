@@ -1,20 +1,27 @@
 <?php
-// rename("/test1.txt", "/rogman.txt");
+
 include('./policy-code/FileHandler.php');
 
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
+
 $data = json_decode(file_get_contents("php://input"), true);
 extract($data);
 $response = array('error' => '', 'newLocation' => '', 'ok' => false, 'row' => '');
+
+if ($targetType == 'file')
+    $newLocation = $targetParent;
+
+else
+    $newLocation = $targetLocation;
+
+$dest =  $newLocation . '/' . $fileName;
 try {
-    $newLocation = $targetLocation . '/' . $fileName;
-    if (!rename($_SERVER['DOCUMENT_ROOT'] . $currentLocation, $_SERVER['DOCUMENT_ROOT'] . $newLocation)) {
+
+
+    if (!rename($_SERVER['DOCUMENT_ROOT'] . $currentLocation, $_SERVER['DOCUMENT_ROOT'] . $dest)) {
         throw new Exception(error_get_last()['message']);
     }
 
-    $fileHandler = new FileHandler($newLocation);
+    $fileHandler = new FileHandler($dest);
 
     $response['ok'] = true;
     $response['newLocation'] = $newLocation;

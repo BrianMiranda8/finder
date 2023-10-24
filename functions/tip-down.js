@@ -19,6 +19,7 @@ mainTable.addEventListener('click', async (event) => {
     tip();
 
     let tr = event.target.closest('tr');
+
     let directoryPath = tr.getAttribute('data-location');
     if (!tr.getAttribute('data-set')) {
         await initOpening(tr, directoryPath);
@@ -56,23 +57,15 @@ function displayContent(path, parent) {
         let parent = tr.getAttribute('data-parent');
         if (!parent.includes(path)) return;
 
-
-
-        if (img.classList.contains('closed-folder')) {
-            let dir = tr.querySelector('div[data-type="dir"]');
-            // if (dir != null) {
-            //     dir.querySelector('div.arrow').classList.remove('open-folder')
-            //     dir.querySelector('div.arrow').classList.add('closed-folder')
-            // }
+        if (img.classList.contains('closed-folder'))
             tr.classList.add('close-row')
 
-        }
-        else {
-
+        else
             tr.classList.remove('close-row')
-        }
+
     })
 }
+
 function tip() {
     let folder = event.target.parentElement.querySelector('a.folder-icon')
 
@@ -89,13 +82,6 @@ function tip() {
 }
 
 
-function set(path) {
-    let isSet = localStorage.getItem(path);
-
-    if (isSet != null) {
-
-    }
-}
 
 function indentChildren(parent, directoryPath) {
     let content = Array.from(document.querySelectorAll(`[data-parent="${directoryPath}"]`));

@@ -59,128 +59,75 @@ table.addEventListener('drop', async (event) => {
     // info about target area
     const targetType = tr.getAttribute('data-type');
     const targetLocation = tr.getAttribute('data-src');
-
+    const targetParent = tr.getAttribute('data-parent');
     let postObj = {
         targetType,
         targetLocation,
         currentLocation,
         fileName,
         parentDir,
-        type
+        type,
+        targetParent
     }
-    
-      
 
-            let request = await fetch(`../process-movement.php`, {
-                method: 'POST',
-                headers: {
-                    "Content-Type": 'text/xml'
-                },
-                body: JSON.stringify(postObj)
-            })
 
-            let response = await request.json();
 
-            if (response) {
-                let { success, newLocation } = response
-                console.log(success, newLocation);
-                if (success) {
+    let request = await fetch(`../process-movement.php`, {
+        method: 'POST',
+        headers: {
+            "Content-Type": 'text/xml'
+        },
+        body: JSON.stringify(postObj)
+    })
 
-                    let row = event.target.closest('tr');
-                    let margin = (row.style.marginLeft == '') ? 0 : parseInt(row.style.marginLeft.replace('px'));
-                    // let row = dir.parentElement.parentElement;
-                    let selectedRow = document.getElementById('selected-row')
-                    console.log(dir);
-                    let cloneSelectedRow = selectedRow.cloneNode(true);
-                    console.log(cloneSelectedRow);
-                    cloneSelectedRow.removeAttribute('id');
-                    cloneSelectedRow.querySelector('div.stuff-items').style.marginLeft = `${margin + 30}px`;
-                    row.insertBefore(cloneSelectedRow, row.nextSibling);
-                    selectedRow.remove();
-                } else {
-                    console.log(response);
-                }
-            }
-   
+    let response = await request.json();
+
+    if (response.ok) {
+        let { success, newLocation } = response
+        console.log(success, newLocation);
+        if (success) {
+
+            let row = event.target.closest('tr');
+            let margin = (row.style.marginLeft == '') ? 0 : parseInt(row.style.marginLeft.replace('px'));
+            // let row = dir.parentElement.parentElement;
+            let selectedRow = document.getElementById('selected-row')
+            console.log(dir);
+            let cloneSelectedRow = selectedRow.cloneNode(true);
+            console.log(cloneSelectedRow);
+            cloneSelectedRow.removeAttribute('id');
+            cloneSelectedRow.querySelector('div.stuff-items').style.marginLeft = `${margin + 30}px`;
+            row.insertBefore(cloneSelectedRow, row.nextSibling);
+            selectedRow.remove();
+        } else {
+            console.log(response);
+        }
+    }
+
 
 
 })
 
 // Events 
 uploadButton.addEventListener('click', () => {
-    let content = uploadModal.querySelector('div.file-modal');
-
 
     uploadModal.classList.remove('hidden');
 })
 
 fileButton.addEventListener('click', () => {
-    let content = fileModal.querySelector('div.file-modal');
 
     fileModal.classList.remove('hidden');
     itemForm['file-name'].focus();
 })
 
 folderButton.addEventListener('click', () => {
-    let content = folderModal.querySelector('div.file-modal');
-
 
     folderModal.classList.remove('hidden');
     folderForm['folder-name'].focus();
 })
 
-function getElementTag(event) {
-    let target = event.target
-    let targetName = target.tagName;
-
-    let returnLink;
-    switch (targetName) {
-        case "TR":
-            returnLink = target.querySelector('td div div:nth-child(3) a').href
-            break;
-        case "A":
-            returnLink = target.href;
-            break
-        case "IMG":
-            returnLink = target.parentElement.parentElement.parentElement.querySelector('div:nth-child(3) a').href;
-            break
-        case "TD":
-            returnLink = event.target.querySelector('div div:nth-child(3) a').href;
-            break;
-        case "DIV":
-            returnLink = target.querySelector('div:nth-child(3) a').href
-            break;
-    }
-    return returnLink
-}
-
-function getElementName(event) {
-    let target = event.target
-    let targetName = target.tagName;
-
-    let returnLink;
-    switch (targetName) {
-        case "TR":
-            returnLink = target.querySelector('td div div:nth-child(3) a').innerText
-            break;
-        case "A":
-            returnLink = target.innerText;
-            break
-        case "IMG":
-            returnLink = target.parentElement.parentElement.parentElement.querySelector('div:nth-child(3) a').innerText;
-            break
-        case "TD":
-            returnLink = event.target.querySelector('div div:nth-child(3) a').href;
-            break;
-    }
-
-    return returnLink
-}
-
-Array.from(draggableRows).forEach(row => {
 
 
-})
+
 let cancelButtons = document.getElementsByName('cancel-button');
 cancelButtons.forEach(button => {
     button.addEventListener('click', (e) => {
@@ -200,28 +147,3 @@ cancelButtons.forEach(button => {
     })
 })
 
-function getRootTr(event) {
-    let target = event.target
-    let targetName = event.target.tagName;
-
-    let returnLink;
-    switch (targetName) {
-        case "TR":
-            returnLink = target.querySelector('div.stuf-items')
-            break;
-        case "A":
-            returnLink = target.parentElement.parentElement
-            break
-        case "IMG":
-            returnLink = target.parentElement.parentElement
-            break
-        case "TD":
-            returnLink = target.children[0];
-            break;
-        case "DIV":
-            returnLink = target
-            break;
-    }
-
-    return returnLink
-}
