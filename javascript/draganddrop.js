@@ -19,12 +19,6 @@ table.addEventListener('dragstart', (event) => {
     let type = tr.getAttribute('data-type');
     tr.id = 'selected-row';
 
-    // const fileUrl = new URL(path);
-
-    // let fileName = tr.querySelector('div div:nth-child(3) a').innerText;
-    // let currentDirectory = fileUrl.searchParams.get('target');
-    // let type = fileUrl.searchParams.get('view');
-
     // /stuff/dogman
     event.dataTransfer.setData('parent', parent);
     // black-block.png
@@ -72,7 +66,7 @@ table.addEventListener('drop', async (event) => {
 
 
 
-    let request = await fetch(`../process-movement.php`, {
+    let request = await fetch(`/stuff/.policy-code/api/process-movement.php`, {
         method: 'POST',
         headers: {
             "Content-Type": 'text/xml'
@@ -84,17 +78,17 @@ table.addEventListener('drop', async (event) => {
 
     if (response.ok) {
         let { success, newLocation } = response
-            let insertRow = document.querySelector(`tr[data-location="${response.newLocation}"]`)
-            let margin = (insertRow.style.marginLeft == '') ? 0 : parseInt(insertRow.style.marginLeft.replace('px'));
-            insertRow.insertAdjacentHTML('afterend', response.row);
-            let selectedRow = document.getElementById('selected-row')
-            selectedRow.remove();
-            // let cloneSelectedRow = selectedRow.cloneNode(true);
-            // console.log(cloneSelectedRow);
-            // sele.removeAttribute('id');
-            // cloneSelectedRow.querySelector('div.stuff-items').style.marginLeft = `${margin + 30}px`;
-            // row.insertBefore(cloneSelectedRow, row.nextSibling);
-            // selectedRow.remove();
+        let insertRow = document.querySelector(`tr[data-location="${response.newLocation}"]`)
+        let margin = (insertRow.style.marginLeft == '') ? 0 : parseInt(insertRow.style.marginLeft.replace('px'));
+        insertRow.insertAdjacentHTML('afterend', response.row);
+        let selectedRow = document.getElementById('selected-row')
+        selectedRow.remove();
+        // let cloneSelectedRow = selectedRow.cloneNode(true);
+        // console.log(cloneSelectedRow);
+        // sele.removeAttribute('id');
+        // cloneSelectedRow.querySelector('div.stuff-items').style.marginLeft = `${margin + 30}px`;
+        // row.insertBefore(cloneSelectedRow, row.nextSibling);
+        // selectedRow.remove();
     }
 
 

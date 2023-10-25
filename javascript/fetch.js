@@ -4,8 +4,7 @@ function api() {
 
 async function getContents(path, type = '') {
     let url = api();
-    let pathName = url.pathname;
-    url.pathname = '/policy-code/path-info.php'
+    url.pathname = '/stuff/.policy-code/api/directory-info.php'
     url.searchParams.append('path', path);
 
     if (type != '')

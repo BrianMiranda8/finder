@@ -1,5 +1,5 @@
 <?php
-include('./FileHandler.php');
+include('../FileHandler.php');
 $handler = new FileHandler($_GET['path']);
 
 $type = $_GET['type'];

@@ -1,6 +1,6 @@
 <?php
 
-include('./policy-code/FileHandler.php');
+include('../FileHandler.php');
 
 
 $data = json_decode(file_get_contents("php://input"), true);
