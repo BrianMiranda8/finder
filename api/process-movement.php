@@ -6,7 +6,8 @@ include('../FileHandler.php');
 $data = json_decode(file_get_contents("php://input"), true);
 extract($data);
 $response = array('error' => '', 'newLocation' => '', 'ok' => false, 'row' => '');
-
+$fileName = preg_replace('/%23/', '#', $fileName);
+$currentLocation = preg_replace('/%23/', '#', $currentLocation);
 if ($targetType == 'file')
     $newLocation = $targetParent;
 else
@@ -24,7 +25,8 @@ try {
     $fileHandler = new FileHandler($dest);
     $response['ok'] = true;
     $response['newLocation'] = $newLocation;
-    $response['row'] = $fileHandler->htmlRow($type, $dest, $fileName, $fileHandler->ext);
+    $response['row'] = "<table>" . $fileHandler->htmlRow($type, $dest, $fileName, $fileHandler->ext) . "</table>";
+
 } catch (Exception $e) {
     $response['error'] = $e->getMessage();
 } finally {

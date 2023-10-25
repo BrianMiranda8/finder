@@ -85,7 +85,7 @@ class FileHandler
         }
         //check for pdf
         elseif ($ext == 'pdf') {
-
+            $target = preg_replace('/#/', '%23', $target);
             $htmlContent = '<tr data-type="' . $type . '" data-parent="' . $this->location . '" data-src="' . $target . '" draggable="true">
             <td>
             <div class="stuff-items">
@@ -138,7 +138,7 @@ class FileHandler
         }
 
         //test for image files and build appropriate anchor
-        elseif ($ext == 'png' || $ext == 'jpg') {
+        elseif ($ext == 'png' || $ext == 'jpg' || $ext == 'jpeg') {
 
             $htmlContent = '<tr data-type="' . $type . '" data-parent="' . $this->location . '" data-src="' . $target . '" draggable="true">
             <td>
@@ -196,10 +196,12 @@ class FileHandler
     <a href="index.php">
     <img src="./.policy-code/images/home-icon-35.png" class="scale-with-grid" style="border: none;">
     </a>
-	<span class="titleText">Viewing</span></div></div>';
+	<span class="titleText">Viewing  ' . $this->name . ' </span>
+    </div>
+    </div>';
     }
 
-    public function DirectoryTitle()
+    public function DirectoryTitle($user)
     {
         //build page header
         echo '<div class="title">
@@ -208,7 +210,7 @@ class FileHandler
     <a href="index.php">
     <img src="./.policy-code/images/home-folder-icon-35.png" class="scale-with-grid" style="border: none;" title="Home">
     </a>
-    <span class="titleText">' . "R + E";
+    <span class="titleText">' . $user;
         echo ' ' . $this->name . '</span> 
         
         <div class="adding-files">

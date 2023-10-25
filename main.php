@@ -1,8 +1,11 @@
 <?php
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/FileHandler.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/config.php');
 
-
-$target = (isset($_GET['target'])) ? $_GET['target'] : '/stuff';
+$target = (!isset($_GET['target']) || $_GET['target'] == '') ? $_HomePage : $_GET['target'];
 
 ?>
 <html lang="en">
@@ -14,27 +17,20 @@ $target = (isset($_GET['target'])) ? $_GET['target'] : '/stuff';
     <link rel="stylesheet" href="./.policy-code/css/modal-css.css">
     <link rel="stylesheet" href="./.policy-code/css/basic.css">
     <link rel="stylesheet" href="./.policy-code/css/skeleton.css" type="text/css">
-    <title>R+E Stuff</title>
+    <title>
+        <?php echo $_User; ?>
+    </title>
 </head>
 
 
 <body class="navpad">
-    <?php
-
-    include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/includes/file-modal.php');
-    include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/includes/folder-modal.php');
-    include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/includes/upload-file-modal.php');
-
-
-
-    ?>
 
     <div class="container">
         <?php
 
         $fileHandler = new FileHandler($target);
         if ($fileHandler->ext == '') {
-            $fileHandler->DirectoryTitle();
+            $fileHandler->DirectoryTitle($_User);
             echo "<table id='main-table'>";
             $fileHandler->buildRows();
             echo "</table>";
@@ -48,7 +44,12 @@ $target = (isset($_GET['target'])) ? $_GET['target'] : '/stuff';
         </div>
     </div>
 
-
+    <?php
+    // upload/create folder and create file modals
+    include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/file-modal.php');
+    include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/folder-modal.php');
+    include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/upload-file-modal.php');
+    ?>
 </body>
 
 
@@ -56,5 +57,6 @@ $target = (isset($_GET['target'])) ? $_GET['target'] : '/stuff';
 <script src="./.policy-code/javascript/fetch.js"></script>
 <script src="./.policy-code/javascript/draganddrop.js"></script>
 <script src="./.policy-code/javascript/tip-down.js"></script>
+<script type="module" src="./.policy-code/javascript/index.js"></script>
 
 </html>
