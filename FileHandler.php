@@ -227,7 +227,7 @@ class FileHandler
 
         echo '</div>
         <div class="one-third column">';
-        include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/search.html');
+        include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/search.php');
 
         echo '</div>
         </div>';
@@ -237,6 +237,69 @@ class FileHandler
         foreach ($this->retrieveContent() as $i) {
             $target = $i['fullPath'];
             echo $this->htmlRow($i['type'], $target, $i['name'], $i['ext']);
+        }
+    }
+    public function buildSearchRows($dir, $substring)
+    {
+        $returnString = '';
+        $searchResult = $this->buildSearchTable($dir, $substring);
+        foreach ($searchResult as $i) {
+            $target = $i['fullPath'];
+            $returnString .= $this->htmlRow($i['type'], $target, $i['name'], $i['ext']);
+        }
+        return $returnString;
+    }
+    public function buildSearchTable($dir, $substring)
+    {
+        $contents = $this->searchFilesWithSubstring($dir, $substring);
+        // $contents = $content = array_diff($contents, array('.', '..'));
+        $contents = array_filter($contents, function ($dir) {
+            return strpos(basename($dir['path']), '.') !== 0;
+        });
+        $contentInfo = array();
+
+        foreach ($contents as $content) {
+
+            $contInfo = array(
+                'type' => '',
+                'fullPath' => '',
+                'name' => '',
+                'ext' => ''
+            );
+
+            $contInfo['fullPath'] = $content['path'];
+            $contInfo['name'] = $content['basename'];
+
+            if (is_dir($content['path'])) {
+                $contInfo['type'] = 'dir';
+            } else if (is_file($content['path'])) {
+                $contInfo['type'] = 'file';
+            }
+
+            $contInfo['ext'] = pathinfo($content['path'], PATHINFO_EXTENSION);
+
+            array_push($contentInfo, $contInfo);
+        }
+        return $contentInfo;
+    }
+    public function searchFilesWithSubstring($directory, $substring)
+    {
+        try {
+
+            $matches = [];
+
+            $files = glob($directory . '/*');
+            foreach ($files as $file) {
+                if (strpos(basename(strtolower($file)), $substring) !== false) {
+                    $matches[] = array('basename' => basename($file), 'path' => $file);
+                }
+                if (is_dir($file)) {
+                    $matches = array_merge($matches, $this->searchFilesWithSubstring($file, $substring));
+                }
+            }
+            return $matches;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
         }
     }
 }
