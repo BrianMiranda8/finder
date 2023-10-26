@@ -6,7 +6,6 @@ class FileHandler
     public $rootPath;
     public $fullPath;
     public $ext;
-
     public $name;
 
     public function __construct(string $location, $rootPath = '/var/www/html')
@@ -175,6 +174,119 @@ class FileHandler
 
         return $htmlContent;
     }
+
+    public function searchRow($type, $location, $target, $name, $ext)
+    {
+        $htmlContent = '';
+        if ($type == 'dir') {
+            $htmlContent = '<tr data-type="' . $type . '" data-parent="' . $location . '" data-src="' . $target . '" data-location="' . $target . '" draggable="true">
+            <td>
+            <div class="stuff-items" data-type="dir" class="open-row">
+            <div class="arrow closed-folder">
+            </div>
+            <div class="narrow">
+            <a href="index.php?target=' . $target . '&view=folder" class="folder-icon">
+            </a>
+            </div>
+            <div>
+            <a href="index.php?target=' . $target . '&view=folder">' . $name . '</a>
+            </div>
+            </div>
+            </td>
+            </tr>';
+        }
+        //check for pdf
+        elseif ($ext == 'pdf') {
+            $target = preg_replace('/#/', '%23', $target);
+            $htmlContent = '<tr data-type="' . $type . '" data-parent="' . $location . '" data-src="' . $target . '" draggable="true">
+            <td>
+            <div class="stuff-items">
+            <div class="arrow">
+            </div>
+            <div class="narrow" >
+            <a href="' . $target . '" target="_blank">
+            <img src="./.policy-code/images/pdf-icon.png" class="folder" title="View PDF">
+            </a>
+            </div>
+            <div>
+            <a href="' . $target . '?target=' . $target . '" target="_blank">' . $name . '</a>
+            </div>
+            </div>
+            </td>
+            </tr>';
+        }
+
+        //test for webarchive
+        elseif ($ext == 'webarchive') {
+
+            $htmlContent = '<tr data-type="' . $type . '" data-parent="' . $location . '" data-src="' . $target . '" draggable="true">
+            <td>
+            <div class="stuff-items">
+            <div class="arrow"></div>
+            <div class="narrow" >
+            <a href="' . $target . '" download>
+            <img src="./.policy-code/images/file.png" class="folder" title="Download Web Archive">
+            </a>
+            </div>
+            <div>
+            <a href="' . $target . '" download>' . $name . ' <span class="download">- (Download)</span></a></div></div></td></tr>';
+        }
+
+        //test for pages, numbers, xls
+        elseif ($ext == 'pages' || $ext == 'numbers' || $ext == 'xls') {
+
+            $htmlContent = '<tr data-type="' . $type . '" data-parent="' . $location . '" data-src="' . $target . '" draggable="true">
+            <td>
+            <div class="stuff-items">
+            <div class="arrow">
+            </div>
+            <div class="narrow" >
+            <a href="' . $target . '" download>
+            <img src="./.policy-code/images/file.png" class="folder" title="Download File">
+            </a>
+            </div>
+            <div>
+            <a href="' . $target . '" download>' . $name . ' <span class="download">- (Download)</span></a></div></div></td></tr>';
+        }
+
+        //test for image files and build appropriate anchor
+        elseif ($ext == 'png' || $ext == 'jpg' || $ext == 'jpeg') {
+
+            $htmlContent = '<tr data-type="' . $type . '" data-parent="' . $location . '" data-src="' . $target . '" draggable="true">
+            <td>
+            <div class="stuff-items">
+            <div class="arrow">
+            </div><div class="narrow"><a href="' . $target . '" target="_blank">
+            <img src="./.policy-code/images/image-icon.png" class="folder" title="View Image">
+            </a>
+            </div>
+            <div>
+            <a href="' . $target . '?target=' . $target . '" target="_blank">' . $name . '</a>
+            </div>
+            </div>
+            </td>
+            </tr>';
+        }
+        //test for php files and list everything but .php
+        elseif ($ext != 'php' && $type == 'file') {
+
+            $htmlContent = '<tr data-type="' . $type . '" data-parent="' . $location . '" data-src="' . $target . '" draggable="true">
+            <td>
+            <div class="stuff-items">
+            <div class="arrow"></div>
+            <div class="narrow" >
+            <a href="index.php?target=' . $target . '&view=file' . '">
+            <img src="./.policy-code/images/file.png" class="folder"></a></div>
+            <div>
+            <a href="index.php?target=' . $target . '&view=file' . '">' . $name . '</a>
+            </div>
+            </div>
+            </td>
+            </tr>' . "\n\n";
+        }
+
+        return $htmlContent;
+    }
     public function display()
     {
 
@@ -227,6 +339,7 @@ class FileHandler
 
         echo '</div>
         <div class="one-third column">';
+
         include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/search.php');
 
         echo '</div>
@@ -244,8 +357,8 @@ class FileHandler
         $returnString = '';
         $searchResult = $this->buildSearchTable($dir, $substring);
         foreach ($searchResult as $i) {
-            $target = $i['fullPath'];
-            $returnString .= $this->htmlRow($i['type'], $target, $i['name'], $i['ext']);
+            $target = str_replace('/var/www/html', '', $i['fullPath']);
+            $returnString .= $this->searchRow($i['type'], dirname($target), $target, $i['name'], $i['ext']);
         }
         return $returnString;
     }
@@ -254,6 +367,7 @@ class FileHandler
         $contents = $this->searchFilesWithSubstring($dir, $substring);
         // $contents = $content = array_diff($contents, array('.', '..'));
         $contents = array_filter($contents, function ($dir) {
+            str_replace('/var/www/html', '', $dir['path']);
             return strpos(basename($dir['path']), '.') !== 0;
         });
         $contentInfo = array();

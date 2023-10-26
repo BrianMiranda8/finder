@@ -8,18 +8,17 @@
                     New Text file In
 
                 </span>
-                <select id=""
-                    style="flex-basis: fit-content;border-radius: 5px;text-align: center;color: blue;font-size: 1.5em;padding:0;">
+                <select id="insert-into-dir" style="flex-basis: fit-content;border-radius: 5px;text-align: center;color: blue;font-size: 1.5em;padding:0;">
                     <?php
                     echo <<<"EOL"
-                            <option selected value="{$fileHandler->name}">{$fileHandler->name}</option>
+                            <option data-path="{$fileHandler->location}" selected value="{$fileHandler->name}">{$fileHandler->name}</option>
                         EOL;
                     $content = $fileHandler->retrieveContent();
                     foreach ($content as $dir) {
                         if ($dir["type"] != 'dir')
                             continue;
                         echo <<<"EOL"
-                                <option value="{$dir['name']}">
+                                <option data-path="{$dir['fullPath']}" value="{$dir['name']}">
                                     {$dir['name']}
                                 </option>
 
@@ -47,18 +46,26 @@
 
 <script type="module">
     let form = document.querySelector('#newItemForm')
-
-
+    let mainTable = document.querySelector("#main-table tbody");
+    let fileModal = document.querySelector('#file-modal');
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
+        let insertIntoDir = document.querySelector("#insert-into-dir");
         let formData = new FormData(form);
+        let selectedOption = insertIntoDir.options[insertIntoDir.options.selectedIndex];
+
+        formData.append('dir', selectedOption.getAttribute('data-path'));
         let request = await fetch('./.policy-code/api/file-process.php', {
             method: "POST",
             body: formData
         });
-        let response = await request;
-        console.log(response)
+        let response = await request.json();
 
+        if (!response.ok) throw new Error('error file now created');
+
+        mainTable.insertAdjacentHTML('afterend', response.row)
+
+        fileModal.classList.add('hidden');
     })
 </script>

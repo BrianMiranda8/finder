@@ -14,7 +14,7 @@
             <h1>Upload file(s)
                 <?php echo $_User; ?>
             </h1>
-            <input type="hidden" id="input1" name="directory" value="<?php echo $_GET['target']; ?>">
+            <input type="hidden" id="input1" name="directory" value="<?php echo $target; ?>">
             <input type='file' id='file-upload' name='upload-file[]' multiple>
             <p>
             <div class="upload-button-container">

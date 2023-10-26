@@ -6,7 +6,6 @@ include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/FileHandler.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/config.php');
 
 $target = (!isset($_GET['target']) || $_GET['target'] == '') ? $_HomePage : $_GET['target'];
-
 ?>
 <html lang="en">
 
@@ -24,7 +23,6 @@ $target = (!isset($_GET['target']) || $_GET['target'] == '') ? $_HomePage : $_GE
 
 
 <body class="navpad">
-
     <div class="container">
         <?php
 

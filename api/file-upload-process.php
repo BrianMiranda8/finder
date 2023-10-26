@@ -1,5 +1,5 @@
 <?php
-$uploaddir = $_SERVER['DOCUMENT_ROOT'] . '/stuff';
+// $uploaddir = $_SERVER['DOCUMENT_ROOT'] . '/stuff';
 $currentDirectory = $_POST['directory'];
 
 function reArrayFiles(&$file_post)
@@ -25,9 +25,8 @@ if ($currentDirectory != "") {
 $newFileArray = reArrayFiles($_FILES['upload-file']);
 
 foreach ($newFileArray as $file) {
-    $uploadfile = $uploaddir . $currentDirectory . "/" . basename($file['name']);
-    echo $uploadfile;
-    echo "<br>";
+    $uploadfile = $_SERVER['DOCUMENT_ROOT'] . $currentDirectory . "/" . basename($file['name']);
+
     if (move_uploaded_file($file['tmp_name'], $uploadfile)) {
         echo "File is valid, and was successfully uploaded.\n";
     } else {
