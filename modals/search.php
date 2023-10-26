@@ -42,35 +42,36 @@
 
         mainTable.innerHTML = response.body;
     })
+    /*
+        search.addEventListener("input", async (event) => {
+            let search = event.target.value;
 
-    search.addEventListener("input", async (event) => {
-        let search = event.target.value;
+            if (search == '') return;
 
-        if (search == '') return;
+            if (delayTimer) {
+                clearTimeout(delayTimer);
+            }
 
-        if (delayTimer) {
-            clearTimeout(delayTimer);
-        }
+            delayTimer = setTimeout(async () => {
+                let request = await fetch("./.policy-code/api/search.php?query=" + search + "&dir=/stuff", {
+                    headers: {
+                        "Content-Type": "Application/json",
+                    },
+                });
+                const datalist = document.querySelector('datalist#suggestions');
 
-        delayTimer = setTimeout(async () => {
-            let request = await fetch("./.policy-code/api/search.php?query=" + search + "&dir=/stuff", {
-                headers: {
-                    "Content-Type": "Application/json",
-                },
-            });
-            const datalist = document.querySelector('datalist#suggestions');
+                datalist.innerHTML = '';
+                let response = await request.json();
 
-            datalist.innerHTML = '';
-            let response = await request.json();
+                if (!response.ok) throw new Error(response.error)
 
-            if (!response.ok) throw new Error(response.error)
-
-            response.body.forEach(sug => {
-                const option = document.createElement('option');
-                option.value = sug.path;
-                option.innerText = sug.basename
-                datalist.appendChild(option);
-            });
-        }, 650);
-    })
+                response.body.forEach(sug => {
+                    const option = document.createElement('option');
+                    option.value = sug.path;
+                    option.innerText = sug.basename
+                    datalist.appendChild(option);
+                });
+            }, 650);
+        })
+        */
 </script>
