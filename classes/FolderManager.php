@@ -27,7 +27,7 @@ class FolderManager
     {
 
         $setBack = (!isset($_GET['target']) || $_GET['target'] == '') ? true : false;
-        ResourceHtml::Directorytitle($user, $this->baseName, $setBack);
+        ResourceHtml::Directorytitle($user, $this->baseName, $setBack, true);
         echo <<<"EOL"
             <table id='main-table'>
                 <tbody>

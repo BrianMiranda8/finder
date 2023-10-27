@@ -17,7 +17,7 @@ class ResourceHtml
 
 
 
-    static public function Directorytitle($user, $baseName, $displayBack = false)
+    static public function Directorytitle($user, $baseName, $displayBack = false, $dispalyModals = false)
     {
         function backButton()
         {
@@ -28,7 +28,23 @@ class ResourceHtml
                 </a>
             EOL;
         }
+        function modals($baseName)
+        {
+            return <<<"EOL"
+                <div class="adding-files">
+                <div class="file-button" id="file-button" title="New Text File inside $baseName">
+                <img src="./.policy-code/images/new-file-icon-white.png">
+                </div>
+                <div class="file-button" id="folder-button" title="New Folder inside $baseName">
+                <img src="./.policy-code/images/new-folder-icon.png">
+                </div>
+                <div class="file-button" id="upload-files-button" title="Upload Files into $baseName">
+                <img src="./.policy-code/images/upload-file-icon.png"></div>
+                </div>
+                EOL;
+        }
 
+        $setModals = (!$dispalyModals) ? '' : modals($baseName);
         $setBack = ($displayBack) ? '' : backButton();
         echo <<<"EOL"
                 <div class="title">
@@ -37,16 +53,7 @@ class ResourceHtml
                     
                     <span class="titleText">$user $baseName</span> 
                         
-                        <div class="adding-files">
-                            <div class="file-button" id="file-button" title="New Text File inside $baseName">
-                            <img src="./.policy-code/images/new-file-icon-white.png">
-                            </div>
-                            <div class="file-button" id="folder-button" title="New Folder inside $baseName">
-                            <img src="./.policy-code/images/new-folder-icon.png">
-                            </div>
-                            <div class="file-button" id="upload-files-button" title="Upload Files into $baseName">
-                            <img src="./.policy-code/images/upload-file-icon.png"></div>
-                        </div>
+                       {$setModals}
                 </div>
                 <div class="one-third column">
                 

@@ -64,8 +64,9 @@
 
         if (!response.ok) throw new Error('error file now created');
 
-        mainTable.insertAdjacentHTML('afterend', response.row)
+        window.location.reload();
+        // mainTable.insertAdjacentHTML('afterend', response.row)
 
-        fileModal.classList.add('hidden');
+        // fileModal.classList.add('hidden');
     })
 </script>

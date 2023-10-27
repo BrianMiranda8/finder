@@ -29,7 +29,7 @@ $resourceInfo = [];
     <link rel="stylesheet" href="./.policy-code/css/basic.css">
     <link rel="stylesheet" href="./.policy-code/css/skeleton.css" type="text/css">
     <title>
-        <?php echo $_User; ?>
+        <?php echo $_User . ' Stuff'; ?>
     </title>
 </head>
 
@@ -40,7 +40,7 @@ $resourceInfo = [];
         <?php
         if ($view != false) {
 
-            ResourceHtml::Directorytitle($_User, "Searching For $_GET[keyword]");
+            ResourceHtml::Directorytitle('', "Searched For '$_GET[keyword]'");
             echo "<table id='main-table'>";
             echo ResourceHandler::buildSearchView($_GET['search'], $_GET['keyword']);
             echo "</table>";
