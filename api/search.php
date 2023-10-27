@@ -1,4 +1,5 @@
 <?php
+include('../classes/ResourceHandler.php');
 include('../FileHandler.php');
 $responseType = $_SERVER['CONTENT_TYPE'];
 $directoryPath = $_GET['dir'];
@@ -9,11 +10,9 @@ $substringToSearch = $_GET['query'];
 
 try {
     if ($responseType == 'Application/json') {
-        $matchingItems = $fileHanlder->searchFilesWithSubstring($fileHanlder->fullPath, $substringToSearch);
+        $matchingItems = ResourceHandler::searchFilesWithSubstring($fileHanlder->fullPath, $substringToSearch);
         $response['ok'] = true;
         $response['body'] = $matchingItems;
-        // Replace 'your_directory_path' with the directory you want to search in.
-
     } elseif ($responseType == 'text/html') {
 
         $table = $fileHanlder->buildSearchRows($fileHanlder->fullPath, $substringToSearch);

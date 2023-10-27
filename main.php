@@ -3,9 +3,21 @@
 // ini_set('display_startup_errors', 1);
 // error_reporting(E_ALL);
 include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/FileHandler.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/classes/FileManager.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/classes/FolderManager.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/classes/ResourceToHtml.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/classes/ResourceHandler.php');
+
 include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/config.php');
 
+
 $target = (!isset($_GET['target']) || $_GET['target'] == '') ? $_HomePage : $_GET['target'];
+if (strpos($target, 'stuff') === false) {
+    $target = '/stuff';
+}
+$view = (!isset($_GET['view']) || $_GET['view'] != 'search') ? false : $_GET['view'];
+$resourceInfo = [];
+
 ?>
 <html lang="en">
 
@@ -24,16 +36,20 @@ $target = (!isset($_GET['target']) || $_GET['target'] == '') ? $_HomePage : $_GE
 
 <body class="navpad">
     <div class="container">
-        <?php
 
-        $fileHandler = new FileHandler($target);
-        if ($fileHandler->ext == '') {
-            $fileHandler->DirectoryTitle($_User);
+        <?php
+        if ($view != false) {
+
+            ResourceHtml::Directorytitle($_User, "Searching For $_GET[keyword]");
             echo "<table id='main-table'>";
-            $fileHandler->buildRows();
+            echo ResourceHandler::buildSearchView($_GET['search'], $_GET['keyword']);
             echo "</table>";
         } else {
-            $fileHandler->display();
+
+            $resourceManager = new ResourceHandler($target);
+            $handler = $resourceManager->get_handler();
+            $resourceInfo = $resourceManager->get_resource_info();
+            $resourceManager->showView($_User);
         }
         ?>
 
@@ -42,19 +58,22 @@ $target = (!isset($_GET['target']) || $_GET['target'] == '') ? $_HomePage : $_GE
         </div>
     </div>
 
-    <?php
-    // upload/create folder and create file modals
+
+</body>
+<script type="text/javascript" src="./.policy-code/javascript/top_button.js"></script>
+<?php
+if ($resourceInfo['type'] == 'directory' && isset($resourceInfo['type'])) {
+
     include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/file-modal.php');
     include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/folder-modal.php');
     include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/upload-file-modal.php');
-    ?>
-</body>
-
-
-<script type="text/javascript" src="./.policy-code/javascript/top_button.js"></script>
-<script src="./.policy-code/javascript/fetch.js"></script>
-<script src="./.policy-code/javascript/draganddrop.js"></script>
-<script src="./.policy-code/javascript/tip-down.js"></script>
-<script type="module" src="./.policy-code/javascript/index.js"></script>
+?>
+    <script src="./.policy-code/javascript/fetch.js"></script>
+    <script src="./.policy-code/javascript/draganddrop.js"></script>
+    <script src="./.policy-code/javascript/tip-down.js"></script>
+    <script type="module" src="./.policy-code/javascript/index.js"></script>
+<?php
+}
+?>
 
 </html>

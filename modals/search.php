@@ -2,9 +2,12 @@
 
 <div id="search-bar" style="float:right;padding:8px 7px 7px 7px;">
     <datalist id="suggestions"></datalist>
-    <form>
+    <form action="index.php">
 
-        <input type="text" name="search-box" style="width:80%;" list="suggestions">
+        <input type="text" name="keyword" style="width:80%;" list="suggestions">
+        <input type="hidden" name="view" value="search">
+        <input type="hidden" name="search" value="<?php echo '/stuff'; ?>">
+
         <input class="clearButton" view="search" type="submit" name="submit" value="Submit">
     </form>
 </div>
@@ -16,32 +19,33 @@
     const mainTable = document.querySelector('#main-table');
     let delayTimer = null;
 
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        let api = new URL(window.location.href);
-        api.pathname = '/stuff/.policy-code/api/search.php';
-        if (search.value.includes('/')) {
-            return;
-        }
+    // form.addEventListener('submit', async (event) => {
+    //     event.preventDefault();
+    //     let api = new URL(window.location.href);
+    //     api.pathname = '/stuff/.policy-code/api/search.php';
+    //     if (search.value.includes('/')) {
+    //         return;
+    //     }
 
-        let query = {
-            query: search.value,
-            base: search.innerText
-        };
-        let dir = (!api.searchParams.has('target')) ? '/stuff' : api.searchParams.get('target')
-        api.searchParams.append('query', search.value);
-        api.searchParams.append('dir', dir);
-        let request = await fetch(api, {
-            headers: {
-                "Content-Type": "text/html",
-            },
-        })
+    //     let query = {
+    //         query: search.value,
+    //         base: search.innerText
+    //     };
+    //     let dir = (!api.searchParams.has('target')) ? '/stuff' : api.searchParams.get('target')
+    //     api.searchParams.append('query', search.value);
+    //     api.searchParams.append('dir', dir);
+    //     let request = await fetch(api, {
+    //         headers: {
+    //             "Content-Type": "text/html",
+    //         },
+    //     })
 
-        let response = await request.json();
-        if (!response.ok) return
+    //     let response = await request.json();
+    //     if (!response.ok) return
 
-        mainTable.innerHTML = response.body;
-    })
+    //     mainTable.innerHTML = response.body;
+    // })
+
     /*
         search.addEventListener("input", async (event) => {
             let search = event.target.value;

@@ -2,7 +2,9 @@
 // ini_set('display_errors', 1);
 // ini_set('display_startup_errors', 1);
 // error_reporting(E_ALL);
-include('../FileHandler.php');
+include("../classes/FileManager.php");
+include("../classes/ResourceToHtml.php");
+
 $returnPage = $_SERVER['HTTP_REFERER'];
 $webRoot = $_SERVER['DOCUMENT_ROOT'];
 $fileName = $_POST['file-name'];
@@ -22,7 +24,7 @@ $metaData = stream_get_meta_data($newfile);
 // Getting the file name from metadata
 $fileNameFromMeta = $metaData['uri'];
 fclose($newfile);
-$file = new FileHandler($_POST['dir'] . '/' . $fileNameFromMeta);
+$file = new FileManager($_POST['dir'] . '/' . $fileNameFromMeta);
 $target = $_POST['dir'] . '/' . $fileNameFromMeta;
-$row = $file->htmlRow('file', $target, $fileNameFromMeta, 'txt');
+$row = $file->buildHTMLRow();
 echo json_encode(['ok' => true, 'row' => $row]);

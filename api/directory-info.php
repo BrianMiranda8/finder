@@ -1,13 +1,14 @@
 <?php
-include('../FileHandler.php');
-$handler = new FileHandler($_GET['path']);
+// include('../FileHandler.php');
+include("../classes/FolderManager.php");
+include("../classes/ResourceToHtml.php");
 
+$handler = new FolderManager($_GET['path'], ResourceHtml::class);
 $type = $_GET['type'];
-
 $responseType = $_SERVER['HTTP_ACCEPT'];
 
 if ($responseType == 'application/json') {
-    $contents = $handler->retrieveContent();
+    $contents = $handler->get_folder_content();
     if (isset($type))
         $contents = array_filter($contents, function ($cont) use ($type) {
             return $cont['type'] == $type;
@@ -18,7 +19,6 @@ if ($responseType == 'application/json') {
 }
 
 if ($responseType == 'text/html') {
-    // echo "<table>";
-    $handler->buildRows();
-    // echo "</table>";
+
+    echo  $handler->buildRows();
 }

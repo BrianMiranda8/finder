@@ -11,11 +11,11 @@
                 <select id="insert-into-dir" style="flex-basis: fit-content;border-radius: 5px;text-align: center;color: blue;font-size: 1.5em;padding:0;">
                     <?php
                     echo <<<"EOL"
-                            <option data-path="{$fileHandler->location}" selected value="{$fileHandler->name}">{$fileHandler->name}</option>
+                            <option data-path="{$resourceManager->get_resource_info()['location']}" selected value="{$resourceManager->get_resource_info()['name']}">{$resourceManager->get_resource_info()['name']}</option>
                         EOL;
-                    $content = $fileHandler->retrieveContent();
+                    $content = $handler->get_folder_content();
                     foreach ($content as $dir) {
-                        if ($dir["type"] != 'dir')
+                        if ($dir["type"] != 'directory')
                             continue;
                         echo <<<"EOL"
                                 <option data-path="{$dir['fullPath']}" value="{$dir['name']}">

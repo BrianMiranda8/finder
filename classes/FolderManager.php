@@ -1,85 +1,66 @@
 <?php
 
-class Folder implements ResourceInterface
+class FolderManager
 {
     public $path;
     public $baseName;
-    public $parent;
-    public $root;
-    public function __construct($path, $root = null)
+    protected $parent;
+    protected $root;
+    protected $manager;
+    public $_Exclude = ['php'];
+
+    public function __construct($path, $resourceManager, $root = null)
     {
         try {
-            if (!is_dir($path)) throw new Exception('path is not a valid directory');
             $this->path = $path;
+            $this->root = $root ?? $_SERVER['DOCUMENT_ROOT'];
+            if (!is_dir($this->root . $path)) throw new Exception('path is not a valid directory');
             $this->baseName = basename($path);
             $this->parent = dirname($path);
-            $this->root = $root ?? $_SERVER['DOCUMENT_ROOT'];
+            $this->manager = $resourceManager;
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
     }
 
-    public function title($user)
+    public function display($user)
     {
-        //build page header
 
+        $setBack = (!isset($_GET['target']) || $_GET['target'] == '') ? true : false;
+        ResourceHtml::Directorytitle($user, $this->baseName, $setBack);
         echo <<<"EOL"
-                <div class="title">
-                    <div class="two-thirds column" style="display:flex;align-items:center;justify-content: space-around;">
-                    <img onclick="history.back()" src="./.policy-code/images/back-icon-35.png" class="scale-with-grid" title="Go Back">
-                    <a href="index.php">
-                    <img src="./.policy-code/images/home-folder-icon-35.png" class="scale-with-grid" style="border: none;" title="Home">
-                    </a>
-                    <span class="titleText">$user $this->baseName</span> 
-                        
-                        <div class="adding-files">
-                            <div class="file-button" id="file-button" title="New Text File inside $this->baseName">
-                            <img src="./.policy-code/images/new-file-icon-white.png">
-                            </div>
-                            <div class="file-button" id="folder-button" title="New Folder inside $this->baseName">
-                            <img src="./.policy-code/images/new-folder-icon.png">
-                            </div>
-                            <div class="file-button" id="upload-files-button" title="Upload Files into $this->baseName">
-                            <img src="./.policy-code/images/upload-file-icon.png"></div>
-                        </div>
-                </div>
-                <div class="one-third column">
+            <table id='main-table'>
+                <tbody>
+                    {$this->buildRows()}
+                </tbody>
+           </table>
         EOL;
-
-
-
-        echo '</div>
-        <div class="one-third column">';
-
-        include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/search.php');
-
-        echo '</div>
-        </div>';
     }
 
-    public function row()
-    {
-        $htmlContent = '<tr data-type="dir" data-parent="' . $this->parent . '" data-src="' . $this->path . '" data-location="' . $this->path . '" draggable="true">
-        <td>
-        <div class="stuff-items" data-type="dir" class="open-row">
-        <div class="arrow closed-folder">
-        </div>
-        <div class="narrow">
-        <a href="index.php?target=' . $this->path . '&view=folder" class="folder-icon">
-        </a>
-        </div>
-        <div>
-        <a href="index.php?target=' . $this->path . '&view=folder">' . $this->baseName . '</a>
-        </div>
-        </div>
-        </td>
-        </tr>';
-        return $htmlContent;
-    }
 
-    public function extract()
+    public function buildRows()
     {
-        $contents = scandir($this->path);
+        $rows = '';
+        $contents = $this->get_folder_content();
+        if (!empty($contents)) {
+
+            foreach ($contents as $i) {
+
+                if ($i['ext'] == '') {
+                    $rows .= ResourceHtml::{$i['type']}($i['parent'], $i['fullPath'], $i['name']);
+                } else {
+                    $rows .= ResourceHtml::{$i['ext']}($i['parent'], $i['fullPath'], $i['name']);
+                }
+            }
+        } else {
+            $rows .= ResourceHtml::empty($this->path, $this->path, 'Empty');
+        }
+
+        return $rows;
+    }
+    public function get_folder_content()
+    {
+        $contents = scandir($this->root . $this->path);
 
         $contents = $content = array_diff($contents, array('.', '..'));
 
@@ -89,28 +70,38 @@ class Folder implements ResourceInterface
         $contentInfo = array();
 
         foreach ($contents as $content) {
+            $extension = pathinfo($content, PATHINFO_EXTENSION);
+
+            if (in_array($extension, $this->_Exclude)) continue;
 
             $contInfo = array(
                 'type' => '',
                 'fullPath' => '',
+                'parent' => '',
                 'name' => '',
                 'ext' => ''
             );
 
-            $contInfo['fullPath'] = join(DIRECTORY_SEPARATOR, array($this->path, $content));;
+            $contInfo['ext'] = pathinfo($content, PATHINFO_EXTENSION);
+            $contInfo['parent'] = join(DIRECTORY_SEPARATOR, array($this->path));
+            $contInfo['fullPath'] = join(DIRECTORY_SEPARATOR, array($this->path, $content));
             $contInfo['name'] = $content;
 
-            if (is_dir($this->path)) {
-                $contInfo['type'] = 'dir';
-            } else if (is_file($this->path)) {
+            if (is_dir($this->root . $contInfo['fullPath'])) {
+                $contInfo['type'] = 'directory';
+            } else if (is_file($this->root . $contInfo['fullPath'])) {
                 $contInfo['type'] = 'file';
             }
 
-            $contInfo['ext'] = pathinfo($content, PATHINFO_EXTENSION);
 
             array_push($contentInfo, $contInfo);
         }
 
         return $contentInfo;
+    }
+
+    public function buildHTMLRow()
+    {
+        return ResourceHtml::directory($this->parent, $this->path, $this->baseName);
     }
 }
