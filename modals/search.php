@@ -6,7 +6,7 @@
 
         <input type="text" name="keyword" style="width:80%;" list="suggestions">
         <input type="hidden" name="view" value="search">
-        <input type="hidden" name="search" value="<?php echo '/stuff'; ?>">
+        <input type="hidden" name="search" value="<?php echo $_HomePage; ?>">
 
         <input class="clearButton" view="search" type="submit" name="submit" value="Submit">
     </form>

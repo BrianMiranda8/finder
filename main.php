@@ -4,7 +4,7 @@ error_reporting(-1);
 ini_set('error_reporting', E_ALL);
 include('./.policy-code/config.php');
 
-include($_SERVER['DOCUMENT_ROOT'] . $_HomePage . '/.policy-code/FileHandler.php');
+// include($_SERVER['DOCUMENT_ROOT'] . $_HomePage . '/.policy-code/FileHandler.php');
 include($_SERVER['DOCUMENT_ROOT'] . $_HomePage . '/.policy-code/classes/FileManager.php');
 include($_SERVER['DOCUMENT_ROOT'] . $_HomePage . '/.policy-code/classes/FolderManager.php');
 include($_SERVER['DOCUMENT_ROOT'] . $_HomePage . '/.policy-code/classes/ResourceToHtml.php');

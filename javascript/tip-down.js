@@ -31,7 +31,7 @@ async function initOpening(tr, directoryPath) {
 }
 
 async function insertDirContent(directoryPath, row) {
-    let dirContent = await getContents(directoryPath.replace(".", ""));
+    let dirContent = await getContents(directoryPath);
 
     row.insertAdjacentHTML("afterend", dirContent);
 }

@@ -39,6 +39,16 @@ table.addEventListener("dragleave", (event) => {
     event.target.style.backgroundColor = "";
 });
 table.addEventListener("drop", async (event) => {
+    var url = window.location;
+
+    var pathname = url.pathname;
+
+    // Remove the leading slash if needed
+    if (pathname.startsWith("/")) {
+        pathname = pathname.substring(1);
+    }
+
+
     event.target.style.backgroundColor = "";
     let tr = event.target.closest("tr");
     // data about file that is being moved
@@ -60,7 +70,7 @@ table.addEventListener("drop", async (event) => {
         targetParent,
     };
 
-    let request = await fetch(`/stuff/.policy-code/api/process-movement.php`, {
+    let request = await fetch(`${pathname}/.policy-code/api/process-movement.php`, {
         method: "POST",
         headers: {
             "Content-Type": "text/html",
