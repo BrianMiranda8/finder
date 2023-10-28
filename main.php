@@ -1,7 +1,7 @@
 <?php
-error_reporting(E_ALL);
-error_reporting(-1);
-ini_set('error_reporting', E_ALL);
+// error_reporting(E_ALL);
+// error_reporting(-1);
+// ini_set('error_reporting', E_ALL);
 include('./.policy-code/config.php');
 
 // include($_SERVER['DOCUMENT_ROOT'] . $_HomePage . '/.policy-code/FileHandler.php');
@@ -44,7 +44,7 @@ $resourceInfo = [];
             ResourceHtml::Directorytitle('', $_HomePage, "Searched For '$_GET[keyword]'");
 
             echo "<table id='main-table'>";
-            echo ResourceHandler::buildSearchView($_GET['search'], $_GET['keyword']);
+            echo ResourceHandler::buildSearchView($_HomePage, $_GET['keyword']);
             echo "</table>";
         } else {
 

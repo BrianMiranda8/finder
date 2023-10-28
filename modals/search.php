@@ -6,9 +6,9 @@
 
         <input type="text" name="keyword" style="width:80%;" list="suggestions">
         <input type="hidden" name="view" value="search">
-        <input type="hidden" name="search" value="<?php echo $_HomePage; ?>">
+        <!-- <input type="hidden" name="search" value="/stuff2.0"> -->
 
-        <input class="clearButton" view="search" type="submit" name="submit" value="Submit">
+        <input class="clearButton" view="search" type="button" name="submit" value="Submit">
     </form>
 </div>
 

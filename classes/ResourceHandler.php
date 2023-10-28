@@ -57,6 +57,7 @@ class ResourceHandler
 
     static function buildSearchView($dir, $keyword)
     {
+
         $show = ResourceHandler::searchFilesWithSubstring($dir, $keyword);
         $rows = "";
         if (!empty($show)) {
@@ -85,8 +86,9 @@ class ResourceHandler
             foreach ($files as $file) {
                 $contInfo = array();
 
-                $cleanFile = str_replace('/var/www/html', '', $file);
-                if (strpos(basename(strtolower($file)), $substring) !== false) {
+                $cleanFile = str_replace($_SERVER['DOCUMENT_ROOT'], '', $file);
+
+                if (strpos(basename(strtolower($file)), strtolower($substring)) !== false) {
                     $contInfo['ext'] = pathinfo($cleanFile, PATHINFO_EXTENSION);
                     $contInfo['parent'] = dirname($cleanFile);
                     $contInfo['path'] = $cleanFile;
