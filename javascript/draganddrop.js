@@ -40,14 +40,8 @@ table.addEventListener("dragleave", (event) => {
 });
 table.addEventListener("drop", async (event) => {
     var url = window.location;
-
-    var pathname = url.pathname;
-
-    // Remove the leading slash if needed
-    if (pathname.startsWith("/")) {
-        pathname = pathname.substring(1);
-    }
-
+    let pathname = url.pathname.substring(0, url.pathname.lastIndexOf("/"));
+    // console.log(url.pathname.substring(0, 9));
 
     event.target.style.backgroundColor = "";
     let tr = event.target.closest("tr");
@@ -60,6 +54,7 @@ table.addEventListener("drop", async (event) => {
     const targetType = tr.getAttribute("data-type");
     const targetLocation = tr.getAttribute("data-src");
     const targetParent = tr.getAttribute("data-parent");
+
     let postObj = {
         targetType,
         targetLocation,
@@ -139,10 +134,11 @@ cancelButtons.forEach((button) => {
 
 function insertNewRow(row, margin, parentRow) {
     let parser = new DOMParser();
-
+    let whereToInsert = parentRow.nextSibling;
     let parseResponseRow = parser.parseFromString(row, "text/html");
 
     parseResponseRow.querySelector("tr div").style.marginLeft = margin + 30;
-
-    mainTable.querySelector("tbody").insertBefore(parseResponseRow.querySelector("tr"), parentRow.nextSibling);
+    if (parentRow.getAttribute("data-src") == "/stuff") whereToInsert = parentRow.previousElementSibling.nextSibling;
+    mainTable.querySelector("tbody").insertBefore(parseResponseRow.querySelector("tr"), whereToInsert);
 }
+// mainTable.querySelector("tbody").insertBefore(parseResponseRow.querySelector("tr"), parentRow.nextSibling);

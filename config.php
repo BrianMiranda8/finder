@@ -1,4 +1,4 @@
 <?php
 $_User = "R+E";
-$_HomePage = '/stuff2.0';
+$_HomePage = '/stuff';
 $_Exclude = ['php', '.', '..'];

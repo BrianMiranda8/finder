@@ -14,7 +14,8 @@ class FolderManager
         try {
             $this->path = $path;
             $this->root = $root ?? $_SERVER['DOCUMENT_ROOT'];
-            if (!is_dir($this->root . $path)) throw new Exception('path is not a valid directory');
+            if (!is_dir($this->root . $path))
+                throw new Exception('path is not a valid directory');
             $this->baseName = basename($path);
             $this->parent = dirname($path);
             $this->manager = $resourceManager;
@@ -32,6 +33,7 @@ class FolderManager
             <table id='main-table'>
                 <tbody>
                     {$this->buildRows()}
+                    {$this->emptyDir()}
                 </tbody>
            </table>
         EOL;
@@ -73,7 +75,8 @@ class FolderManager
         foreach ($contents as $content) {
             $extension = pathinfo($content, PATHINFO_EXTENSION);
 
-            if (in_array($extension, $this->_Exclude)) continue;
+            if (in_array($extension, $this->_Exclude))
+                continue;
 
             $contInfo = array(
                 'type' => '',
@@ -104,5 +107,10 @@ class FolderManager
     public function buildHTMLRow()
     {
         return ResourceHtml::directory($this->parent, $this->path, $this->baseName);
+    }
+
+    protected function emptyDir()
+    {
+        return ResourceHtml::emptyHomeRow($this->parent, $this->path);
     }
 }

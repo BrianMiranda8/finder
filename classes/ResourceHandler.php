@@ -75,7 +75,42 @@ class ResourceHandler
         }
         return $rows;
     }
+    static function searchFileTextWithSubstring($directory, $substring)
+    {
+        try {
 
+            $matches = [];
+
+            $files = glob($_SERVER['DOCUMENT_ROOT'] . $directory . '/*');
+            foreach ($files as $file) {
+                $contInfo = array();
+                $cleanFile = str_replace($_SERVER['DOCUMENT_ROOT'], '', $file);
+
+                if (is_file($file) && pathinfo($cleanFile, PATHINFO_EXTENSION) == 'txt') {
+                    $fileContent = file_get_contents($file);
+                    if (strpos($fileContent, $substring) !== false) {
+                        $contInfo['ext'] = pathinfo($cleanFile, PATHINFO_EXTENSION);
+                        $contInfo['parent'] = dirname($cleanFile);
+                        $contInfo['path'] = $cleanFile;
+
+                        $contInfo['basename'] = basename($cleanFile);
+
+                        $contInfo['type'] = 'file';
+                        $matches[] = $contInfo;
+
+
+                    }
+                }
+
+                if (is_dir($file)) {
+                    $matches = array_merge($matches, self::searchFilesWithSubstring($cleanFile, $substring));
+                }
+            }
+            return $matches;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
     static function searchFilesWithSubstring($directory, $substring)
     {
         try {
@@ -114,6 +149,6 @@ class ResourceHandler
     }
     public function buildResourceRow()
     {
-        return  $this->ResourceHandler->buildHTMLRow();
+        return $this->ResourceHandler->buildHTMLRow();
     }
 }

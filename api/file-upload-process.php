@@ -28,7 +28,7 @@ foreach ($newFileArray as $file) {
     $uploadfile = $_SERVER['DOCUMENT_ROOT'] . $currentDirectory . "/" . basename($file['name']);
 
     if (move_uploaded_file($file['tmp_name'], $uploadfile)) {
-        echo "File is valid, and was successfully uploaded.\n";
+        // echo "File is valid, and was successfully uploaded.\n";
     } else {
         echo "Possible file upload attack!\n";
         break;

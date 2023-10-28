@@ -119,6 +119,25 @@ class ResourceHtml
     {
         return self::file($parent, $path, $baseName);
     }
+    static function emptyHomeRow($parent, $path)
+    {
+        $htmlContent = '<tr data-type="file" data-set=true data-parent="' . $path . '" data-src="' . $path . '" data-location="' . $path . '" draggable="true">
+        <td>
+        <div style="margin-left:-30px;" >
+        <div >
+        </div>
+        <div style="visibility: hidden;" class="narrow">
+        <a href="index.php?target=' . $path . '&view=folder" class="folder-icon">
+        </a>
+        </div>
+        <div>
+        <a href="index.php?target=' . $path . '&view=folder"></a>
+        </div>
+        </div>
+        </td>
+        </tr>';
+        return $htmlContent;
+    }
     static function directory($parent, $path, $baseName)
     {
         $htmlContent = '<tr data-type="dir" data-parent="' . $parent . '" data-src="' . $path . '" data-location="' . $path . '" draggable="true">

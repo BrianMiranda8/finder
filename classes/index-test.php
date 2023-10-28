@@ -10,7 +10,7 @@ include('./ResourceToHtml.php');
 // $resourceHTMLManager = new ResourceHtml();
 // $FolderManager = new FolderManager('/stuff', ResourceHtml::class);
 
-$show = ResourceHandler::searchFilesWithSubstring('/stuff', 'a');
+$show = ResourceHandler::searchFileTextWithSubstring('/stuff', 'a');
 echo "<table>";
 foreach ($show as $i) {
 
