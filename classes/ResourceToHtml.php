@@ -68,6 +68,7 @@ class ResourceHtml
         echo '</div>
         </div>';
     }
+
     static function empty($parent, $path, $baseName)
     {
 

@@ -1,7 +1,5 @@
 <?php
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
+
 include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/FileHandler.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/classes/FileManager.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/classes/FolderManager.php');
