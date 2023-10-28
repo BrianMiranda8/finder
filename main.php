@@ -41,6 +41,7 @@ $resourceInfo = [];
         if ($view != false) {
 
             ResourceHtml::Directorytitle('', "Searched For '$_GET[keyword]'");
+
             echo "<table id='main-table'>";
             echo ResourceHandler::buildSearchView($_GET['search'], $_GET['keyword']);
             echo "</table>";
@@ -62,17 +63,19 @@ $resourceInfo = [];
 </body>
 <script type="text/javascript" src="./.policy-code/javascript/top_button.js"></script>
 <?php
-if ($resourceInfo['type'] == 'directory' && isset($resourceInfo['type'])) {
+if (isset($resourceInfo['type'])) {
+    if ($resourceInfo['type'] != 'directory') exit();
 
     include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/file-modal.php');
     include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/folder-modal.php');
     include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/upload-file-modal.php');
-?>
-    <script src="./.policy-code/javascript/fetch.js"></script>
-    <script src="./.policy-code/javascript/draganddrop.js"></script>
-    <script src="./.policy-code/javascript/tip-down.js"></script>
-    <script type="module" src="./.policy-code/javascript/index.js"></script>
-<?php
+
+    echo <<<"EOL"
+        <script src="./.policy-code/javascript/fetch.js"></script>
+        <script src="./.policy-code/javascript/draganddrop.js"></script>
+        <script src="./.policy-code/javascript/tip-down.js"></script>
+        <script type="module" src="./.policy-code/javascript/index.js"></script>
+    EOL;
 }
 ?>
 
