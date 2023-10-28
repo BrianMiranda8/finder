@@ -20,7 +20,7 @@ class FileManager
             throw new Exception($e->getMessage());
         }
     }
-    public function display($user)
+    public function display($user, $empty)
     {
         $this->title($user);
         if ($this->extension == 'html') {

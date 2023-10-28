@@ -17,7 +17,7 @@ class ResourceHtml
 
 
 
-    static public function Directorytitle($user, $baseName, $displayBack = false, $dispalyModals = false)
+    static public function Directorytitle($user, $home, $baseName, $displayBack = false, $dispalyModals = false)
     {
         function backButton()
         {
@@ -63,7 +63,7 @@ class ResourceHtml
         echo '</div>
         <div class="one-third column">';
 
-        include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/search.php');
+        include($_SERVER['DOCUMENT_ROOT'] . $home . '/.policy-code/modals/search.php');
 
         echo '</div>
         </div>';

@@ -23,11 +23,11 @@ class FolderManager
         }
     }
 
-    public function display($user)
+    public function display($user, $home)
     {
 
         $setBack = (!isset($_GET['target']) || $_GET['target'] == '') ? true : false;
-        ResourceHtml::Directorytitle($user, $this->baseName, $setBack, true);
+        ResourceHtml::Directorytitle($user, $home, $this->baseName, $setBack, true);
         echo <<<"EOL"
             <table id='main-table'>
                 <tbody>
@@ -58,6 +58,7 @@ class FolderManager
 
         return $rows;
     }
+
     public function get_folder_content()
     {
         $contents = scandir($this->root . $this->path);

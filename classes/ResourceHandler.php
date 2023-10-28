@@ -18,8 +18,10 @@ class ResourceHandler
 
             $this->rootPath = $rootPath ?? $_SERVER['DOCUMENT_ROOT'];
             $this->location = $location;
+
             if (!file_exists($this->rootPath . $location) && !is_dir($this->rootPath . $location))
                 throw new Exception('Path either does not exist or your path is not a directory.');
+
             $this->fullPath = $this->rootPath . $this->location;
             $this->name = basename($location);
             $this->ext = pathinfo($this->location, PATHINFO_EXTENSION);
@@ -42,10 +44,10 @@ class ResourceHandler
         return array("location" => $this->location, 'rootPath' => $this->rootPath, 'ext' => $this->ext, 'name' => $this->name, 'type' => $this->type);
     }
 
-    public function showView($user)
+    public function showView($user, $home)
     {
 
-        $this->ResourceHandler->display($user);
+        $this->ResourceHandler->display($user, $home);
     }
 
     public function get_handler()

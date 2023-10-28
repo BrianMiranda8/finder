@@ -1,17 +1,20 @@
 <?php
+error_reporting(E_ALL);
+error_reporting(-1);
+ini_set('error_reporting', E_ALL);
+include('./.policy-code/config.php');
 
-include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/FileHandler.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/classes/FileManager.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/classes/FolderManager.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/classes/ResourceToHtml.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/classes/ResourceHandler.php');
+include($_SERVER['DOCUMENT_ROOT'] . $_HomePage . '/.policy-code/FileHandler.php');
+include($_SERVER['DOCUMENT_ROOT'] . $_HomePage . '/.policy-code/classes/FileManager.php');
+include($_SERVER['DOCUMENT_ROOT'] . $_HomePage . '/.policy-code/classes/FolderManager.php');
+include($_SERVER['DOCUMENT_ROOT'] . $_HomePage . '/.policy-code/classes/ResourceToHtml.php');
+include($_SERVER['DOCUMENT_ROOT'] . $_HomePage . '/.policy-code/classes/ResourceHandler.php');
 
-include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/config.php');
 
 
 $target = (!isset($_GET['target']) || $_GET['target'] == '') ? $_HomePage : $_GET['target'];
-if (strpos($target, 'stuff') === false) {
-    $target = '/stuff';
+if (strpos($target, $_HomePage) === false) {
+    $target = $_HomePage;
 }
 $view = (!isset($_GET['view']) || $_GET['view'] != 'search') ? false : $_GET['view'];
 $resourceInfo = [];
@@ -38,7 +41,7 @@ $resourceInfo = [];
         <?php
         if ($view != false) {
 
-            ResourceHtml::Directorytitle('', "Searched For '$_GET[keyword]'");
+            ResourceHtml::Directorytitle('', $_HomePage, "Searched For '$_GET[keyword]'");
 
             echo "<table id='main-table'>";
             echo ResourceHandler::buildSearchView($_GET['search'], $_GET['keyword']);
@@ -48,7 +51,7 @@ $resourceInfo = [];
             $resourceManager = new ResourceHandler($target);
             $handler = $resourceManager->get_handler();
             $resourceInfo = $resourceManager->get_resource_info();
-            $resourceManager->showView($_User);
+            $resourceManager->showView($_User, $_HomePage);
         }
         ?>
 
@@ -64,9 +67,9 @@ $resourceInfo = [];
 if (isset($resourceInfo['type'])) {
     if ($resourceInfo['type'] != 'directory') exit();
 
-    include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/file-modal.php');
-    include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/folder-modal.php');
-    include($_SERVER['DOCUMENT_ROOT'] . '/stuff/.policy-code/modals/upload-file-modal.php');
+    include($_SERVER['DOCUMENT_ROOT'] . $_HomePage . '/.policy-code/modals/file-modal.php');
+    include($_SERVER['DOCUMENT_ROOT'] . $_HomePage . '/.policy-code/modals/folder-modal.php');
+    include($_SERVER['DOCUMENT_ROOT'] . $_HomePage . '/.policy-code/modals/upload-file-modal.php');
 
     echo <<<"EOL"
         <script src="./.policy-code/javascript/fetch.js"></script>
