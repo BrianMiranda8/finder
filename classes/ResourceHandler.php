@@ -55,10 +55,10 @@ class ResourceHandler
         return $this->ResourceHandler;
     }
 
-    static function buildSearchView($dir, $keyword)
+    static function buildSearchView($show)
     {
 
-        $show = ResourceHandler::searchFilesWithSubstring($dir, $keyword);
+
         $rows = "";
         if (!empty($show)) {
 
@@ -75,6 +75,7 @@ class ResourceHandler
         }
         return $rows;
     }
+
     static function searchFileTextWithSubstring($directory, $substring)
     {
         try {
@@ -85,8 +86,11 @@ class ResourceHandler
             foreach ($files as $file) {
                 $contInfo = array();
                 $cleanFile = str_replace($_SERVER['DOCUMENT_ROOT'], '', $file);
+                $fileExtension = pathinfo($cleanFile, PATHINFO_EXTENSION);
 
-                if (is_file($file) && pathinfo($cleanFile, PATHINFO_EXTENSION) == 'txt') {
+                $fileType = (is_file($file)) ? 'file' : (is_dir($file) ? 'dir' : null);
+
+                if ($fileType == 'file' && $fileExtension == 'txt') {
                     $fileContent = file_get_contents($file);
                     if (strpos($fileContent, $substring) !== false) {
                         $contInfo['ext'] = pathinfo($cleanFile, PATHINFO_EXTENSION);
@@ -97,13 +101,12 @@ class ResourceHandler
 
                         $contInfo['type'] = 'file';
                         $matches[] = $contInfo;
-
-
                     }
+                    continue;
                 }
 
                 if (is_dir($file)) {
-                    $matches = array_merge($matches, self::searchFilesWithSubstring($cleanFile, $substring));
+                    $matches = array_merge($matches, self::searchFileTextWithSubstring($cleanFile, $substring));
                 }
             }
             return $matches;
@@ -111,6 +114,7 @@ class ResourceHandler
             throw new Exception($e->getMessage());
         }
     }
+
     static function searchFilesWithSubstring($directory, $substring)
     {
         try {

@@ -44,7 +44,12 @@ $resourceInfo = [];
             ResourceHtml::Directorytitle('', $_HomePage, "Searched For '$_GET[keyword]'");
 
             echo "<table id='main-table'>";
-            echo ResourceHandler::buildSearchView($_HomePage, $_GET['keyword']);
+
+
+
+            $search = (strpos($_GET['keyword'], '@') === false) ?
+                ResourceHandler::searchFilesWithSubstring($_HomePage, $_GET['keyword']) : ResourceHandler::searchFileTextWithSubstring($_HomePage, preg_replace('/@/', '', $_GET['keyword']));
+            echo ResourceHandler::buildSearchView($search);
             echo "</table>";
         } else {
 
